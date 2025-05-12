@@ -117,7 +117,13 @@
   }
 
   function initChat() {
-    getMessages();
+    // HTTP
+    // Request --> Response
+    // Polling
+
+    // Websocket
+    // Message <--> Message
+    setInterval(getMessages, 3000);
     initForm();
   }
 
