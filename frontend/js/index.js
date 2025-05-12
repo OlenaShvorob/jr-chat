@@ -34,6 +34,10 @@
 
 
 {
+  // Состояние
+  const messages = [];
+  let atBottom = false;
+
   const container = document.querySelector(".messages");
 
   function renderMessages(messages) {
@@ -56,7 +60,7 @@
     }
   }
 
-  function getMessages() {
+  function getMessages(cb) {
     fetch("http://localhost:4000/messages", {
       method: "GET",
     })
@@ -68,9 +72,16 @@
         return messagesResponse.json();
       })
       .then(function (messagesList) {
-        console.log(messagesList);
         renderMessages(messagesList);
+
+        if (typeof cb === "function") {
+          cb();
+        }
       });
+  }
+
+  function scrollToBottom() {
+    container.scrollTop = container.scrollHeight;
   }
 
   function initForm() {
@@ -100,8 +111,6 @@
         body: JSON.stringify(messageData),
       })
         .then(function(newMessageResponse) {
-          console.log(newMessageResponse.status);
-
           if (newMessageResponse.status !== 200) {
             //
           }
@@ -111,7 +120,7 @@
           formSubmitButton.disabled = false;
           formSubmitButton.textContent = "Отправить";
 
-          getMessages();
+          getMessages(scrollToBottom);
         });
     }
   }
@@ -123,8 +132,19 @@
 
     // Websocket
     // Message <--> Message
+    getMessages();
     setInterval(getMessages, 3000);
     initForm();
+
+    // Как правильно скроллить?
+    // - Когда мы сами отправили [новое сообщение]
+    // - Когда мы находимся внизу списка и пришло [новое сообщение]
+
+    // - Когда мы находимся не снизу списка и пришло [новое сообщние], 
+    //   нужна индикация
+
+    // | | | | | | | | | |
+    //        | ||  ||| |
   }
 
   initChat();
