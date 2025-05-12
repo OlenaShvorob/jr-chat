@@ -19,10 +19,20 @@
   3. Периодическая отрисовка всех сообщений
 -->
 
+<dialog class="username">
+  <form method="POST">
+    <fieldset>
+      <label>Username</label>
+      <input required type="text" name="username" placeholder="username" autocapitalize="off" autocomplete="off"  />
+    </fieldset>
+    <button type="submit">Join</button>
+  </form>
+</dialog>
+
 <main>
   <section class="messages"></section>
 
-  <section class="form">
+  <section class="form" id="message-form">
     <form method="POST" action="/">
       <input type="hidden" name="username" value="guest001" />
       <textarea name="text"></textarea>

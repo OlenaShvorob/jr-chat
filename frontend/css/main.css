@@ -29,6 +29,10 @@ header h1 {
   width: 50%;
 }
 
+.message-mine {
+  margin-left: auto;
+}
+
 .message-header {
   display: flex;
   justify-content: space-between;
