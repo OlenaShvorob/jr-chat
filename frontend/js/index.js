@@ -54,27 +54,66 @@
   const chatContainer = document.querySelector(".messages");
   const usernameContainer = document.querySelector(".username");
 
-  function renderMessages(messages) {
-    chatContainer.innerHTML = "";
-
-    for (const message of messages) {
-      const messageElement = document.createElement("article");
-      messageElement.className = "message";
-      messageElement.classList.toggle("message-mine", username === message.username);
-
-      messageElement.innerHTML = `
-        <div class="message-header">
-          <div class="message-author">${message.username}</div>
-          <button class="message-control"></button>
-        </div>
-        <p class="message-text">${message.text}</p>
-        <time class="message-time">${message.timestamp}</time>
-      `;
-
-      chatContainer.appendChild(messageElement);
-    }
+  /**
+ * Форматирует сырый текст:
+ * 1) `код` → <code>код</code>
+ * 2) :) → 😊
+ * 3) :( → 😞
+ */
+  function formatText(raw) {
+   return raw
+      .replace(/`([^`]+)`/g, (_match, code) => `<code>${code}</code>`)
+      .replace(/:\)/g, '😊')
+      .replace(/:\(/g, '😞');
   }
 
+  function renderMessages(messages) {
+  // очистить контейнер
+  chatContainer.innerHTML = "";
+
+  for (const message of messages) {
+    // 1) распарсить ISO-дату в объект Date
+    const dateObj = new Date(message.timestamp);
+
+    // 2) формат даты для разделителя (пример: "17 May 2025")
+    const dateLabel = dateObj.toLocaleDateString("en-GB", {
+      day:   "numeric",
+      month: "short",
+      year:  "numeric"
+    });
+
+    // 3) формат времени для самих сообщений (пример: "14:05")
+    const time = dateObj.toLocaleTimeString("en-GB", {
+      hour:   "2-digit",
+      minute: "2-digit"
+    });
+
+    // 4) если это первый месседж нового дня — вставить разделитель
+    if (!renderMessages._lastDate || renderMessages._lastDate !== dateObj.toDateString()) {
+      const sep = document.createElement("div");
+      sep.className = "date-separator";
+      sep.textContent = dateLabel;
+      chatContainer.appendChild(sep);
+      renderMessages._lastDate = dateObj.toDateString();
+    }
+
+    // 5) сама карточка сообщения
+    const messageElement = document.createElement("article");
+    messageElement.className = "message";
+    messageElement.classList.toggle("message-mine", username === message.username);
+
+    messageElement.innerHTML = `
+      <div class="message-header">
+        <div class="message-author">${message.username}</div>
+        <button class="message-control"></button>
+      </div>
+      <p class="message-text">${formatText(message.text)}</p>
+      <time class="message-time">${time}</time>
+    `;
+
+    chatContainer.appendChild(messageElement);
+  }
+}
   function getMessages(cb) {
     fetch("http://localhost:4000/messages", {
       method: "GET",
