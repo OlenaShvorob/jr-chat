@@ -209,4 +209,16 @@
   }
 
   initApp();
+
+  //Кнопка "Выйти": очищаем имя и перезагружаем страницу
+  const logoutBtn = document.getElementById("logout");
+  if (logoutBtn) {
+    logoutBtn.onclick = () => {
+      // убираем из localStorage сохраненное имя
+      localStorage.removeItem(USERNAME_REC);
+      // перезагружаем страницу - покажется форма ввода имени
+      location.reload();
+    }
+  }
 }
+  

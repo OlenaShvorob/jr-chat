@@ -74,3 +74,14 @@ header h1 {
 .form button {
   font: 16px sans-serif;
 }
+
+.logout-btn {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1em;
+  cursor: pointer;
+}
